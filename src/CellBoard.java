@@ -3,12 +3,15 @@ import java.util.Arrays;
 
 class CellBoard {
     private int index;
+    private int won; // 0 for not won, 1 for p1, 2 for p2
     private int[] center;
     private int[][][] board_lines;
+    private Rectangle outline;
     private Cell[] cells;
 
     CellBoard(MainBoard mb, int i) {
         index = i;
+        won = 0;
 
         // Calculate center of board from index and main board center
         center = new int[2];
@@ -16,6 +19,8 @@ class CellBoard {
         center[1] = mb.getCenter()[1] + (index / 3 - 1) * mb.getSize() / 3;
 
         int size = (int) (mb.getSize() / 3.0 * 0.9);
+
+        outline = new Rectangle(center[0] - size / 2, center[1] - size / 2, size, size);
 
         // Create board lines
         board_lines = new int[4][2][2]; // 4 lines with 2 points of 2 coordinates each
@@ -34,15 +39,19 @@ class CellBoard {
 
         // Create Cells
         cells = new Cell[9];
-        int cell_size = (int)(size / 3 * 0.8);
+        int cell_size = (int) (size / 3 * 0.8);
         for (int k = 0; k < 9; k++) {
             int cell_center_x = center[0] + (k % 3 - 1) * size / 3;
             int cell_center_y = center[1] + (k / 3 - 1) * size / 3;
-            cells[k] = new Cell(cell_center_x, cell_center_y , cell_size);
+            cells[k] = new Cell(cell_center_x, cell_center_y, cell_size);
         }
     }
 
-    void draw(Graphics2D g) {
+    void draw(Graphics2D g, int active) {
+        if (active == -1 || index == active) {
+            g.setColor(new Color(255, 255, 200));
+            g.fill(outline);
+        }
         g.setColor(Color.BLACK);
         for (int[][] board_line : board_lines) {
             int x1 = board_line[0][0];
@@ -58,14 +67,26 @@ class CellBoard {
         }
     }
 
-    boolean checkClick(Point clickPt, boolean player) {
-        for (Cell c : cells) {
+    int checkClick(Point clickPt, boolean player, int active) {
+        if (index != active && active != -1) {
+            return -1;
+        }
+        for (int i = 0; i < cells.length; i++) {
+            Cell c = cells[i];
             if (c.contains(clickPt) && !c.filled()) {
                 c.fill(player);
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
+    }
+
+    boolean isWon() {
+        return won > 0;
+    }
+
+    int getIndex() {
+        return index;
     }
 }
 

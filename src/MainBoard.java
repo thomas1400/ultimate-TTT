@@ -7,6 +7,7 @@ class MainBoard {
     private int[] center;
     private int size; // width and height
     private int[][][] board_lines;
+    private int active_board;
 
     MainBoard(int[] center, int size) {
         this.size = size;
@@ -29,6 +30,8 @@ class MainBoard {
         board_lines[3] = new int[][]{
                 {center[0] - size / 2, center[1] + size / 6},
                 {center[0] + size / 2, center[1] + size / 6}};
+
+        active_board = -1;
     }
 
     CellBoard[] getCells() {
@@ -45,7 +48,7 @@ class MainBoard {
 
     void draw(Graphics2D g) {
         for (CellBoard cb : cells) {
-            cb.draw(g);
+            cb.draw(g, active_board);
         }
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke((float) (size / 100.0)));
@@ -59,10 +62,15 @@ class MainBoard {
         }
     }
 
-    // TODO: Update active board, restrict click to active board
     boolean checkClick(Point clickPt, boolean player) {
         for (CellBoard cb : cells) {
-            if (cb.checkClick(clickPt, player)) {
+            int check = cb.checkClick(clickPt, player, active_board);
+            if (check != -1) {
+                if (cells[check].isWon()) {
+                    active_board = -1;
+                } else {
+                    active_board = check;
+                }
                 return true;
             }
         }
