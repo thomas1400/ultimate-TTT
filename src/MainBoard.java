@@ -47,6 +47,7 @@ class MainBoard {
         for (CellBoard cb : cells) {
             cb.draw(g);
         }
+        g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke((float) (size / 100.0)));
         for (int[][] board_line : board_lines) {
             int x1 = board_line[0][0];
@@ -58,9 +59,14 @@ class MainBoard {
         }
     }
 
-    // TODO: Check the click, set the square, update active board
-    boolean checkClick(Point clickPt, boolean p1Turn) {
-        return true;
+    // TODO: Update active board, restrict click to active board
+    boolean checkClick(Point clickPt, boolean player) {
+        for (CellBoard cb : cells) {
+            if (cb.checkClick(clickPt, player)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // TODO: Check victory (write victory algorithm)

@@ -71,7 +71,6 @@ public class Game extends JPanel implements MouseListener {
     }
 
     // Implemented mouseListener methods
-
     @Override
     public void mouseClicked(MouseEvent me) {
         clickPt = me.getPoint();
