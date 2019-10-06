@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ultimate-TTT:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ultimate_TTT_jar</output-path>
+    <root id="archive" name="ultimate-TTT.jar">
+      <element id="module-output" name="ultimate-TTT" />
+    </root>
+  </artifact>
+</component>
