@@ -1,20 +1,19 @@
 import java.awt.*;
-import java.util.Arrays;
 
 class CellBoard {
     private int index;
-    private int won; // 0 for not won, 1 for p1, 2 for p2
-    private int[] center;
+    private int victory; // 0 for not won, 1 for p1, 2 for p2
     private int[][][] board_lines;
     private Rectangle outline;
     private Cell[] cells;
+    private int last_clicked;
 
     CellBoard(MainBoard mb, int i) {
         index = i;
-        won = 0;
+        victory = 0;
 
         // Calculate center of board from index and main board center
-        center = new int[2];
+        int[] center = new int[2];
         center[0] = mb.getCenter()[0] + (index % 3 - 1) * mb.getSize() / 3;
         center[1] = mb.getCenter()[1] + (index / 3 - 1) * mb.getSize() / 3;
 
@@ -48,8 +47,16 @@ class CellBoard {
     }
 
     void draw(Graphics2D g, int active) {
-        if (active == -1 || index == active) {
-            g.setColor(new Color(255, 255, 200));
+        if (victory == 0 && (active == -1 || index == active)) {
+            g.setColor(new Color(255, 255, 220));
+            g.fill(outline);
+        }
+        if (victory == 1) {
+            g.setColor(new Color(255, 220, 220));
+            g.fill(outline);
+        }
+        if (victory == 2) {
+            g.setColor(new Color(220, 220, 255));
             g.fill(outline);
         }
         g.setColor(Color.BLACK);
@@ -67,22 +74,82 @@ class CellBoard {
         }
     }
 
-    int checkClick(Point clickPt, boolean player, int active) {
-        if (index != active && active != -1) {
+    int checkClick(Point clickPt, int player, int active) {
+        if (victory != 0 || (index != active && active != -1)) {
             return -1;
         }
         for (int i = 0; i < cells.length; i++) {
             Cell c = cells[i];
             if (c.contains(clickPt) && !c.filled()) {
+                last_clicked = i;
                 c.fill(player);
+                checkVictory(player);
                 return i;
             }
         }
         return -1;
     }
 
-    boolean isWon() {
-        return won > 0;
+    private void checkVictory(int player) {
+        // check all three in a rows. check for victories by last player played using last_clicked index
+        int x = last_clicked % 3;
+        int y = last_clicked / 3;
+
+        // check horizontals
+        for (int j = 0; j < 3; j++) {
+            int index = (j * 3) + x;
+            if (!cells[index].player(player)) {
+                break;
+            }
+            if (j == 2) {
+                victory = player;
+            }
+        }
+
+        // check verticals
+        for (int j = 0; j < 3; j++) {
+            int index = (y * 3) + j;
+            if (!cells[index].player(player)) {
+                break;
+            }
+            if (j == 2) {
+                victory = player;
+            }
+        }
+
+        // check diagonal
+        if (x == y) {
+            for (int j = 0; j < 3; j++) {
+                int index = (j * 3) + j;
+                if (!cells[index].player(player)) {
+                    break;
+                }
+                if (j == 2) {
+                    victory = player;
+                }
+            }
+        }
+
+        // check anti-diagonal
+        if (x + y == 2) {
+            for (int j = 0; j < 3; j++) {
+                int index = (j * 3) + (2 - j);
+                if (!cells[index].player(player)) {
+                    break;
+                }
+                if (j == 2) {
+                    victory = player;
+                }
+            }
+        }
+    }
+
+    boolean getVictory() {
+        return victory > 0;
+    }
+
+    boolean playerWon(int p) {
+        return victory == p;
     }
 
     int getIndex() {
