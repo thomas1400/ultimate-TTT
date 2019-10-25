@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.util.Arrays;
 
 public class Game extends JPanel implements MouseListener {
     private MainBoard mb;
@@ -14,6 +15,7 @@ public class Game extends JPanel implements MouseListener {
     private Point clickPt;
     private int currentPlayer;
     private int victory;
+    private GameAgent ga;
 
     public static void main(String[] args) {
         // Create JFrame, Game, add Game to JFrame and set settings
@@ -29,11 +31,11 @@ public class Game extends JPanel implements MouseListener {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Initialize instance variables
         g.mb = new MainBoard(new int[]{g.getWidth() / 2, g.getHeight() / 2}, (int) (g.getWidth() * 0.95));
         g.mouseClicked = false;
         g.currentPlayer = 1;
         g.victory = 0;
+        g.ga = new GameAgent();
 
         // Create update and repaint timer and start it
         Timer t = new Timer(10, new ActionListener() {
@@ -96,6 +98,9 @@ public class Game extends JPanel implements MouseListener {
                     victory = currentPlayer;
                     mb.endGame();
                 }
+
+                System.out.println(ga.minimaxMove(mb, 5, currentPlayer));
+
                 currentPlayer = (currentPlayer) % 2 + 1;
             }
             mouseClicked = false;
@@ -113,11 +118,11 @@ public class Game extends JPanel implements MouseListener {
             renderString(g2d, "Player " + currentPlayer + "'s Turn",
                     60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
         } else {
-            this.renderString(g2d, "Player " + victory + " Wins!",
+            renderString(g2d, "Player " + victory + " Wins!",
                     60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
         }
 
-        this.renderString(g2d, "Ultimate Tic-Tac-Toe",
+        renderString(g2d, "Ultimate Tic-Tac-Toe",
                 60, 0, getWidth() / 2, (getHeight() - getWidth()) / 4);
     }
 

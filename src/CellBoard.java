@@ -8,6 +8,25 @@ class CellBoard {
     private Cell[] cells;
     private int last_clicked;
 
+    private CellBoard(CellBoard copy) {
+        this.index = copy.index;
+        this.victory = copy.victory;
+        this.outline = new Rectangle(copy.outline);
+        this.cells = new Cell[copy.cells.length];
+        for (int i = 0; i < this.cells.length; i++) {
+            this.cells[i] = copy.cells[i].copy();
+        }
+        this.last_clicked = copy.last_clicked;
+        this.board_lines = new int[copy.board_lines.length]
+                [copy.board_lines[0].length]
+                [copy.board_lines[0][0].length];
+        for (int i = 0; i < this.board_lines.length; i++) {
+            for (int j = 0; j < this.board_lines[i].length; j++) {
+                this.board_lines[i][j] = copy.board_lines[i][j].clone();
+            }
+        }
+    }
+
     CellBoard(MainBoard mb, int i) {
         index = i;
         victory = 0;
@@ -90,6 +109,14 @@ class CellBoard {
         return -1;
     }
 
+    boolean checkMove(int index) {
+        return !cells[index].filled();
+    }
+
+    void makeMove(int index, int player) {
+        cells[index].fill(player);
+    }
+
     private void checkVictory(int player) {
         // check all three in a rows. check for victories by last player played using last_clicked index
         int x = last_clicked % 3;
@@ -154,6 +181,10 @@ class CellBoard {
 
     int getIndex() {
         return index;
+    }
+
+    CellBoard copy() {
+        return new CellBoard(this);
     }
 }
 

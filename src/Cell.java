@@ -5,6 +5,12 @@ public class Cell extends Rectangle {
     private boolean filled;
     private int player; // 1 for 1, 2 for 2
 
+    private Cell(Cell copy) {
+        this.hitbox = new Rectangle(copy.hitbox);
+        this.filled = copy.filled;
+        this.player = copy.player;
+    }
+
     Cell(int center_x, int center_y, int size) {
         // Create draw rectangle
         super(center_x - size / 2, center_y - size / 2, size, size);
@@ -43,6 +49,10 @@ public class Cell extends Rectangle {
     @Override
     public boolean contains(Point p) {
         return hitbox.contains(p);
+    }
+
+    Cell copy() {
+        return new Cell(this);
     }
 
 }

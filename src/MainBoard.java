@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 class MainBoard {
     private CellBoard[] cells;
@@ -8,6 +10,26 @@ class MainBoard {
     private int active_board;
     private int last_clicked;
     private int move_count;
+
+    private MainBoard(MainBoard copy) {
+        this.size = copy.size;
+        this.center = copy.center;
+        this.cells = new CellBoard[copy.cells.length];
+        for (int i = 0; i < cells.length; i++) {
+            this.cells[i] = copy.cells[i].copy();
+        }
+        this.board_lines = new int[copy.board_lines.length]
+                                  [copy.board_lines[0].length]
+                                  [copy.board_lines[0][0].length];
+        for (int i = 0; i < this.board_lines.length; i++) {
+            for (int j = 0; j < this.board_lines[i].length; j++) {
+                this.board_lines[i][j] = copy.board_lines[i][j].clone();
+            }
+        }
+        this.active_board = copy.active_board;
+        this.last_clicked = copy.last_clicked;
+        this.move_count = copy.move_count;
+    }
 
     MainBoard(int[] center, int size) {
         this.size = size;
@@ -141,6 +163,45 @@ class MainBoard {
 
     void endGame() {
         active_board = -2;
+    }
+
+    ArrayList<Move> getChildren(int player) {
+        ArrayList<Move> children = new ArrayList<>();
+        Move newmove;
+        MainBoard newmb;
+        for (int cb = 0; cb < cells.length; cb++) {
+            if (active_board == cells[cb].getIndex() || (active_board < 0 && !cells[cb].getVictory())) {
+                for (int cell = 0; cell < 9; cell++) {
+                    if (cells[cb].checkMove(cell)) {
+                        newmb = new MainBoard(this);
+                        newmb.cells[cb].makeMove(cell, player);
+                        System.out.println(newmb.heuristic());
+                        newmove = new Move(newmb, cb, cell, 0);
+                        children.add(newmove);
+                    }
+                }
+            }
+        }
+        return children;
+    }
+
+    int heuristic() {
+        int h = 0;
+        for (CellBoard cb : cells) {
+            if (cb.playerWon(1)) {
+                h += 1;
+            }
+            if (cb.playerWon(2)){
+                h -= 1;
+            }
+        }
+        if (this.checkVictory(1)) {
+            h += 10;
+        }
+        if (this.checkVictory(2)) {
+            h -= 10;
+        }
+        return h;
     }
 
 }
