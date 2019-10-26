@@ -117,7 +117,7 @@ class CellBoard {
         cells[index].fill(player);
     }
 
-    private void checkVictory(int player) {
+    void checkVictory(int player) {
         // check all three in a rows. check for victories by last player played using last_clicked index
         int x = last_clicked % 3;
         int y = last_clicked / 3;

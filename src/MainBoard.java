@@ -169,13 +169,13 @@ class MainBoard {
         ArrayList<Move> children = new ArrayList<>();
         Move newmove;
         MainBoard newmb;
-        for (int cb = 0; cb < cells.length; cb++) {
-            if (active_board == cells[cb].getIndex() || (active_board < 0 && !cells[cb].getVictory())) {
+        for (int cb = 0; cb < this.cells.length; cb++) {
+            if (active_board == this.cells[cb].getIndex() || (active_board < 0 && !this.cells[cb].getVictory())) {
                 for (int cell = 0; cell < 9; cell++) {
-                    if (cells[cb].checkMove(cell)) {
+                    if (this.cells[cb].checkMove(cell)) {
                         newmb = new MainBoard(this);
                         newmb.cells[cb].makeMove(cell, player);
-                        System.out.println(newmb.heuristic());
+                        newmb.cells[cb].checkVictory(player);
                         newmove = new Move(newmb, cb, cell, 0);
                         children.add(newmove);
                     }
@@ -202,6 +202,10 @@ class MainBoard {
             h -= 10;
         }
         return h;
+    }
+
+    public void makeMove(Move m, int player) {
+        this.cells[m.getCellBoard()].makeMove(m.getCell(), player);
     }
 
 }

@@ -99,9 +99,10 @@ public class Game extends JPanel implements MouseListener {
                     mb.endGame();
                 }
 
+                currentPlayer = (currentPlayer) % 2 + 1;
+
                 System.out.println(ga.minimaxMove(mb, 5, currentPlayer));
 
-                currentPlayer = (currentPlayer) % 2 + 1;
             }
             mouseClicked = false;
         }
@@ -113,6 +114,7 @@ public class Game extends JPanel implements MouseListener {
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         mb.draw(g2d);
+        //mb.getChildren(1).get(0).getBoard().draw(g2d);
 
         if (victory == 0) {
             renderString(g2d, "Player " + currentPlayer + "'s Turn",

@@ -4,16 +4,28 @@ public class Cell extends Rectangle {
     private Rectangle hitbox;
     private boolean filled;
     private int player; // 1 for 1, 2 for 2
+    private int cx;
+    private int cy;
+    private int size;
 
     private Cell(Cell copy) {
+        super(copy.cx - copy.size / 2, copy.cy - copy.size / 2, copy.size, copy.size);
+
         this.hitbox = new Rectangle(copy.hitbox);
         this.filled = copy.filled;
         this.player = copy.player;
+        this.cx = copy.cx;
+        this.cy = copy.cy;
+        this.size = copy.size;
     }
 
     Cell(int center_x, int center_y, int size) {
         // Create draw rectangle
         super(center_x - size / 2, center_y - size / 2, size, size);
+
+        this.cx = center_x;
+        this.cy = center_y;
+        this.size = size;
 
         // Create hitbox (or clickbox) rectangle
         size /= 0.8;

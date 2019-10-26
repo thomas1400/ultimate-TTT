@@ -26,6 +26,7 @@ public class GameAgent {
             }
             moves.get(i).setValue(score);
         }
+        //mb.makeMove(moves.get(bestindex), player);
         return moves.get(bestindex);
     }
 
