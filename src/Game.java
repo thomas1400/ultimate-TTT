@@ -7,15 +7,19 @@ import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.util.Arrays;
 
 public class Game extends JPanel implements MouseListener {
     private MainBoard mb;
     private boolean mouseClicked;
+    private boolean gameStarted;
+    private int gameType;
     private Point clickPt;
     private int currentPlayer;
     private int victory;
     private GameAgent ga;
+
+    private Button onePButton;
+    private Button twoPButton;
 
     public static void main(String[] args) {
         // Create JFrame, Game, add Game to JFrame and set settings
@@ -35,6 +39,13 @@ public class Game extends JPanel implements MouseListener {
         g.mouseClicked = false;
         g.currentPlayer = 1;
         g.victory = 0;
+
+        g.onePButton = new Button("1 Player", 60,
+                g.getWidth()/2, g.getHeight()/2 - 75, g.getWidth()/2, 100);
+        g.twoPButton = new Button("2 Players", 60,
+                g.getWidth()/2, g.getHeight()/2 + 75, g.getWidth()/2, 100);
+        g.gameType = 0;
+
         g.ga = new GameAgent();
 
         // Create update and repaint timer and start it
@@ -57,7 +68,7 @@ public class Game extends JPanel implements MouseListener {
         });
     }
 
-    private void renderString(Graphics2D g, String text, int size, int outline, int x, int y) {
+    public static void renderString(Graphics2D g, String text, int size, int outline, int x, int y) {
 
         Graphics2D g2d = (Graphics2D) g.create();
 
@@ -93,18 +104,38 @@ public class Game extends JPanel implements MouseListener {
 
     private void update() {
         if (mouseClicked) {
-            if (mb.checkClick(clickPt, currentPlayer)) { // checkClick checks click, updates board, activeboard
-                if (mb.checkVictory(currentPlayer)) {
-                    victory = currentPlayer;
-                    mb.endGame();
+            if (!gameStarted) {
+                System.out.println("clicked");
+                if (onePButton.contains(clickPt)) {
+                    gameStarted = true;
+                    gameType = 1;
                 }
+                if (twoPButton.contains(clickPt)) {
+                    gameStarted = true;
+                    gameType = 2;
+                }
+                mouseClicked = false;
+            } else {
+                if (mb.checkClick(clickPt, currentPlayer)) { // checkClick checks click, updates board, activeboard
+                    if (mb.checkVictory(currentPlayer)) {
+                        victory = currentPlayer;
+                        mb.endGame();
+                    }
+                    if (gameType == 1) { // if 1 player: make computer move, check victory
+                        Move AIMove = ga.alphabetaMove(mb, 4, 2);
+                        mb.makeMove(AIMove.getCellBoard(), AIMove.getCell(), 2);
+                        if (mb.checkVictory(2)) {
+                            victory = 2;
+                            mb.endGame();
+                        }
+                    }
+                    if (gameType == 2) { // if 2 player: change currentPlayer
+                        currentPlayer = 3 - currentPlayer;
+                    }
 
-                currentPlayer = (currentPlayer) % 2 + 1;
-
-                //System.out.println(ga.alphabetaMove(mb, 3, currentPlayer));
-
+                }
+                mouseClicked = false;
             }
-            mouseClicked = false;
         }
     }
 
@@ -113,19 +144,25 @@ public class Game extends JPanel implements MouseListener {
         Graphics2D g2d = (Graphics2D) graphics;
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        mb.draw(g2d);
-        //mb.getChildren(1).get(0).getBoard().draw(g2d);
-
-        if (victory == 0) {
-            renderString(g2d, "Player " + currentPlayer + "'s Turn",
-                    60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
-        } else {
-            renderString(g2d, "Player " + victory + " Wins!",
-                    60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
-        }
 
         renderString(g2d, "Ultimate Tic-Tac-Toe",
                 60, 0, getWidth() / 2, (getHeight() - getWidth()) / 4);
+
+        if (!gameStarted) {
+            onePButton.draw(g2d);
+            twoPButton.draw(g2d);
+        } else {
+            mb.draw(g2d);
+
+            if (victory == 0) {
+                renderString(g2d, "Player " + currentPlayer + "'s Turn",
+                        60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
+            } else {
+                renderString(g2d, "Player " + victory + " Wins!",
+                        60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
+            }
+        }
+
     }
 
     // Implemented mouseListener methods

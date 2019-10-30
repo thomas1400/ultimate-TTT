@@ -185,8 +185,11 @@ class MainBoard {
         return children;
     }
 
-    private void makeMove(int cb, int cell, int player) {
+    public void makeMove(int cb, int cell, int player) {
         cells[cb].makeMove(cell, player);
+        last_clicked = cell;
+        cells[cb].setLastClicked(cell);
+        cells[cb].checkVictory(player);
         active_board = cell;
         if (cells[active_board].getVictory()) {
             active_board = -1;

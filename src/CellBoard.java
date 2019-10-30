@@ -179,6 +179,10 @@ class CellBoard {
         return victory == p;
     }
 
+    void setLastClicked(int i) {
+        last_clicked = i;
+    }
+
     int getIndex() {
         return index;
     }
