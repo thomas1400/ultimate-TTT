@@ -3,12 +3,14 @@ public class Move {
     private MainBoard board;
     private int cellBoard;
     private int cell;
+    private int player;
     private int value;
 
-    public Move(MainBoard mb, int cb, int c, int v) {
+    public Move(MainBoard mb, int cb, int c, int p, int v) {
         board = mb;
         cellBoard = cb;
         cell = c;
+        player = p;
         value = v;
     }
 
@@ -34,6 +36,6 @@ public class Move {
 
     @Override
     public String toString() {
-        return "Board: " + this.getCellBoard() + " Cell: " + this.getCell() + " Value: " + this.getValue();
+        return "Player: " + player + " Board: " + this.getCellBoard() + " Cell: " + this.getCell() + " Value: " + this.getValue();
     }
 }

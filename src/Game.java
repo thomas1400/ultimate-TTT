@@ -101,7 +101,7 @@ public class Game extends JPanel implements MouseListener {
 
                 currentPlayer = (currentPlayer) % 2 + 1;
 
-                System.out.println(ga.minimaxMove(mb, 5, currentPlayer));
+                //System.out.println(ga.alphabetaMove(mb, 3, currentPlayer));
 
             }
             mouseClicked = false;

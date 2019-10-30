@@ -174,15 +174,23 @@ class MainBoard {
                 for (int cell = 0; cell < 9; cell++) {
                     if (this.cells[cb].checkMove(cell)) {
                         newmb = new MainBoard(this);
-                        newmb.cells[cb].makeMove(cell, player);
+                        newmb.makeMove(cb, cell, player);
                         newmb.cells[cb].checkVictory(player);
-                        newmove = new Move(newmb, cb, cell, 0);
+                        newmove = new Move(newmb, cb, cell, player, newmb.heuristic());
                         children.add(newmove);
                     }
                 }
             }
         }
         return children;
+    }
+
+    private void makeMove(int cb, int cell, int player) {
+        cells[cb].makeMove(cell, player);
+        active_board = cell;
+        if (cells[active_board].getVictory()) {
+            active_board = -1;
+        }
     }
 
     int heuristic() {
@@ -202,10 +210,6 @@ class MainBoard {
             h -= 10;
         }
         return h;
-    }
-
-    public void makeMove(Move m, int player) {
-        this.cells[m.getCellBoard()].makeMove(m.getCell(), player);
     }
 
 }
