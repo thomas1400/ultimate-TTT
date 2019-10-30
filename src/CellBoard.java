@@ -1,30 +1,32 @@
 import java.awt.*;
 
 class CellBoard {
-    private int index;
-    private int victory; // 0 for not won, 1 for p1, 2 for p2
-    private int[][][] board_lines;
     private Rectangle outline;
     private Cell[] cells;
-    private int last_clicked;
+    private int[][][] boardLines;
+
+    private int index;
+    private int victory; // 0 for not won, 1 for p1, 2 for p2
+    private int lastClicked;
 
     private CellBoard(CellBoard copy) {
-        this.index = copy.index;
-        this.victory = copy.victory;
         this.outline = new Rectangle(copy.outline);
         this.cells = new Cell[copy.cells.length];
         for (int i = 0; i < this.cells.length; i++) {
             this.cells[i] = copy.cells[i].copy();
         }
-        this.last_clicked = copy.last_clicked;
-        this.board_lines = new int[copy.board_lines.length]
-                [copy.board_lines[0].length]
-                [copy.board_lines[0][0].length];
-        for (int i = 0; i < this.board_lines.length; i++) {
-            for (int j = 0; j < this.board_lines[i].length; j++) {
-                this.board_lines[i][j] = copy.board_lines[i][j].clone();
+        this.boardLines = new int[copy.boardLines.length]
+                [copy.boardLines[0].length]
+                [copy.boardLines[0][0].length];
+        for (int i = 0; i < this.boardLines.length; i++) {
+            for (int j = 0; j < this.boardLines[i].length; j++) {
+                this.boardLines[i][j] = copy.boardLines[i][j].clone();
             }
         }
+
+        this.index = copy.index;
+        this.victory = copy.victory;
+        this.lastClicked = copy.lastClicked;
     }
 
     CellBoard(MainBoard mb, int i) {
@@ -41,17 +43,17 @@ class CellBoard {
         outline = new Rectangle(center[0] - size / 2, center[1] - size / 2, size, size);
 
         // Create board lines
-        board_lines = new int[4][2][2]; // 4 lines with 2 points of 2 coordinates each
-        board_lines[0] = new int[][]{
+        boardLines = new int[4][2][2]; // 4 lines with 2 points of 2 coordinates each
+        boardLines[0] = new int[][]{
                 {center[0] - size / 6, center[1] - size / 2},
                 {center[0] - size / 6, center[1] + size / 2}}; // vertical left
-        board_lines[1] = new int[][]{
+        boardLines[1] = new int[][]{
                 {center[0] + size / 6, center[1] - size / 2},
                 {center[0] + size / 6, center[1] + size / 2}};
-        board_lines[2] = new int[][]{
+        boardLines[2] = new int[][]{
                 {center[0] - size / 2, center[1] - size / 6},
                 {center[0] + size / 2, center[1] - size / 6}};
-        board_lines[3] = new int[][]{
+        boardLines[3] = new int[][]{
                 {center[0] - size / 2, center[1] + size / 6},
                 {center[0] + size / 2, center[1] + size / 6}};
 
@@ -65,6 +67,11 @@ class CellBoard {
         }
     }
 
+    /**
+     * Draws this CellBoard using Graphics2D.
+     * @param g a Graphics2D instance
+     * @param active the active board
+     */
     void draw(Graphics2D g, int active) {
         if (victory == 0 && (active == -1 || index == active)) {
             g.setColor(new Color(255, 255, 220));
@@ -79,7 +86,7 @@ class CellBoard {
             g.fill(outline);
         }
         g.setColor(Color.BLACK);
-        for (int[][] board_line : board_lines) {
+        for (int[][] board_line : boardLines) {
             int x1 = board_line[0][0];
             int y1 = board_line[0][1];
             int x2 = board_line[1][0];
@@ -93,6 +100,13 @@ class CellBoard {
         }
     }
 
+    /**
+     * Checks if a mouse click makes a valid move.
+     * @param clickPt the Point of the mouse click
+     * @param player the current player
+     * @param active the active board
+     * @return the index of the cell clicked, or -1 if not a valid move
+     */
     int checkClick(Point clickPt, int player, int active) {
         if (victory != 0 || (index != active && active != -1)) {
             return -1;
@@ -100,7 +114,7 @@ class CellBoard {
         for (int i = 0; i < cells.length; i++) {
             Cell c = cells[i];
             if (c.contains(clickPt) && !c.filled()) {
-                last_clicked = i;
+                lastClicked = i;
                 c.fill(player);
                 checkVictory(player);
                 return i;
@@ -109,18 +123,32 @@ class CellBoard {
         return -1;
     }
 
+    /**
+     * Checks if a move is possible.
+     * @param index the cell to check
+     * @return true if the cell is not filled
+     */
     boolean checkMove(int index) {
         return !cells[index].filled();
     }
 
+    /**
+     * Makes a move in a given cell.
+     * @param index the cell index
+     * @param player the current player
+     */
     void makeMove(int index, int player) {
         cells[index].fill(player);
     }
 
+    /**
+     * Checks if the given player has won this CellBoard.
+     * @param player the current player
+     */
     void checkVictory(int player) {
         // check all three in a rows. check for victories by last player played using last_clicked index
-        int x = last_clicked % 3;
-        int y = last_clicked / 3;
+        int x = lastClicked % 3;
+        int y = lastClicked / 3;
 
         // check horizontals
         for (int j = 0; j < 3; j++) {
@@ -171,22 +199,43 @@ class CellBoard {
         }
     }
 
+    /**
+     * Checks if this board is won.
+     * @return true if a player has won this board
+     */
     boolean getVictory() {
         return victory > 0;
     }
 
+    /**
+     * Checks if a given player has won this board.
+     * @param p the player to check
+     * @return true if p has won
+     */
     boolean playerWon(int p) {
         return victory == p;
     }
 
+    /**
+     * Sets the last clicked Cell for this CellBoard. Used for AI.
+     * @param i the index
+     */
     void setLastClicked(int i) {
-        last_clicked = i;
+        lastClicked = i;
     }
 
+    /**
+     * Gets the index of this CellBoard.
+     * @return this.index
+     */
     int getIndex() {
         return index;
     }
 
+    /**
+     * Creates a copy of this CellBoard.
+     * @return a new CellBoard
+     */
     CellBoard copy() {
         return new CellBoard(this);
     }

@@ -1,6 +1,10 @@
 import java.awt.*;
 
 public class Button {
+    /**
+     * A Button for use with Graphics2D, with a black outline and text.
+     */
+
     private Rectangle outline;
     private String text;
     private int size;
@@ -15,6 +19,10 @@ public class Button {
         this.cy = cy;
     }
 
+    /**
+     * Draws the button.
+     * @param g2d a Graphics2D instance
+     */
     public void draw(Graphics2D g2d) {
         g2d.setColor(Color.WHITE);
         g2d.fill(outline);
@@ -23,6 +31,11 @@ public class Button {
         Game.renderString(g2d, text, size, 1, cx, cy);
     }
 
+    /**
+     * Checks if a point is contained in the button.
+     * @param p a Point
+     * @return true if Point is inside outline
+     */
     public boolean contains(Point p) {
         return outline.contains(p);
     }

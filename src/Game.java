@@ -9,14 +9,19 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 
 public class Game extends JPanel implements MouseListener {
+    /**
+     * Driving class for the Ultimate TTT game.
+     */
     private MainBoard mb;
+    private Point clickPt;
+    private GameAgent ga;
+
     private boolean mouseClicked;
     private boolean gameStarted;
+
     private int gameType;
-    private Point clickPt;
     private int currentPlayer;
     private int victory;
-    private GameAgent ga;
 
     private Button onePButton;
     private Button twoPButton;
@@ -35,8 +40,14 @@ public class Game extends JPanel implements MouseListener {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Initialize Game instance variables.
         g.mb = new MainBoard(new int[]{g.getWidth() / 2, g.getHeight() / 2}, (int) (g.getWidth() * 0.95));
+        g.ga = new GameAgent();
+
         g.mouseClicked = false;
+        g.gameStarted = false;
+
+        g.gameType = 0;
         g.currentPlayer = 1;
         g.victory = 0;
 
@@ -44,11 +55,8 @@ public class Game extends JPanel implements MouseListener {
                 g.getWidth()/2, g.getHeight()/2 - 75, g.getWidth()/2, 100);
         g.twoPButton = new Button("2 Players", 60,
                 g.getWidth()/2, g.getHeight()/2 + 75, g.getWidth()/2, 100);
-        g.gameType = 0;
 
-        g.ga = new GameAgent();
-
-        // Create update and repaint timer and start it
+        // Create update and repaint timer and start it.
         Timer t = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -59,7 +67,7 @@ public class Game extends JPanel implements MouseListener {
 
         t.start();
 
-        // Create WindowListener to stop timer on close, ending the process
+        // Create WindowListener to stop timer on close, ending the process.
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -68,6 +76,15 @@ public class Game extends JPanel implements MouseListener {
         });
     }
 
+    /**
+     * Renders a String in the window using Graphics2D.
+     * @param g a Graphics2D instance
+     * @param text the String to render
+     * @param size the font size
+     * @param outline the width of the outline
+     * @param x the center x of the text
+     * @param y the center y of the text
+     */
     public static void renderString(Graphics2D g, String text, int size, int outline, int x, int y) {
 
         Graphics2D g2d = (Graphics2D) g.create();
@@ -102,6 +119,10 @@ public class Game extends JPanel implements MouseListener {
         g2d.dispose();
     }
 
+    /**
+     * Updates the game.
+     * Checks for clicks, processes clicks and makes moves, and checks for victory.
+     */
     private void update() {
         if (mouseClicked) {
             if (!gameStarted) {
@@ -139,6 +160,10 @@ public class Game extends JPanel implements MouseListener {
         }
     }
 
+    /**
+     * Paints game components/menus.
+     * @param graphics a Graphics instance
+     */
     @Override
     public void paintComponent(Graphics graphics) {
         Graphics2D g2d = (Graphics2D) graphics;
@@ -166,6 +191,11 @@ public class Game extends JPanel implements MouseListener {
     }
 
     // Implemented mouseListener methods
+
+    /**
+     * Records click point upon mouse click.
+     * @param me MouseEvent
+     */
     @Override
     public void mouseClicked(MouseEvent me) {
         clickPt = me.getPoint();

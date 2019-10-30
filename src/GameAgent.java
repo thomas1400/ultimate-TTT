@@ -1,11 +1,23 @@
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameAgent {
+    /**
+     * An AI agent for move selection in Ultimate TTT.
+     *
+     * Uses the minimax search algorithm with alpha-beta pruning to choose the best move
+     * out of all possible moves.
+     */
 
     GameAgent() { }
 
+    /**
+     * Chooses a move using minimax search without alpha-beta pruning.
+     * @param mb the MainBoard
+     * @param depth maximum recursion depth
+     * @param player player to search for
+     * @return Move, the best move to make
+     */
     public Move minimaxMove(MainBoard mb, int depth, int player) {
         ArrayList<Move> moves = mb.getChildren(player);
 
@@ -41,6 +53,13 @@ public class GameAgent {
         return options.get(new Random().nextInt(options.size()));
     }
 
+    /**
+     * Chooses a move using minimax search with alpha-beta pruning.
+     * @param mb the MainBoard
+     * @param depth maximum recursion depth
+     * @param player player to search for
+     * @return Move, the best move to make
+     */
     public Move alphabetaMove(MainBoard mb, int depth, int player) {
         ArrayList<Move> moves = mb.getChildren(player);
 
@@ -76,6 +95,14 @@ public class GameAgent {
         return options.get(new Random().nextInt(options.size()));
     }
 
+    /**
+     * Implements minimax search on MainBoard instances to determine the best move
+     * to make for the current player.
+     * @param node the MainBoard to search from
+     * @param depth the maximum recursion depth
+     * @param player the current player
+     * @return the score of node
+     */
     private int minimax(MainBoard node, int depth, int player) {
         if (depth == 0 || node.checkVictory(player) || node.checkFull()) {
             return node.heuristic();
@@ -96,6 +123,17 @@ public class GameAgent {
         }
     }
 
+    /**
+     * Implements minimax search on MainBoard instances to determine the best move
+     * to make for the current player.
+     *
+     * Uses alpha-beta pruning to minimize the search space, eliminating game state
+     * branches that are absolutely worse.
+     * @param node the MainBoard to search from
+     * @param depth the maximum recursion depth
+     * @param player the current player
+     * @return the score of node
+     */
     private int alphabeta(MainBoard node, int depth, int a, int b, int player) {
         if (depth == 0 || node.checkVictory(player) || node.checkFull()) {
             return node.heuristic();
@@ -124,6 +162,7 @@ public class GameAgent {
         }
     }
 
+    // Overloaded alphabeta method, calls alphabeta with starting values of a and b.
     private int alphabeta(MainBoard board, int depth, int player) {
         return alphabeta(board, depth, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
     }

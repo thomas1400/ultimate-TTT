@@ -34,19 +34,36 @@ public class Cell extends Rectangle {
         player = 0;
     }
 
+    /**
+     * Checks if this cell is filled.
+     * @return this.filled
+     */
     boolean filled() {
         return filled;
     }
 
+    /**
+     * Checks if this cell is filled by a player.
+     * @param p the player to check
+     * @return true if this.player is p
+     */
     boolean player(int p) {
         return player == p;
     }
 
+    /**
+     * Fill this cell for the given player.
+     * @param p the player to fill
+     */
     void fill(int p) {
         filled = true;
         player = p;
     }
 
+    /**
+     * Draws this Cell.
+     * @param g a Graphics2D instance
+     */
     void draw(Graphics2D g) {
         if (filled) {
             if (player == 1) { // if P1
@@ -58,11 +75,20 @@ public class Cell extends Rectangle {
         }
     }
 
+    /**
+     * Checks if a Point is contained in this Cell.
+     * @param p the Point
+     * @return true if p is contained in this.hitbox
+     */
     @Override
     public boolean contains(Point p) {
         return hitbox.contains(p);
     }
 
+    /**
+     * Creates a copy of this cell.
+     * @return a new Cell
+     */
     Cell copy() {
         return new Cell(this);
     }
