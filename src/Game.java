@@ -32,7 +32,7 @@ public class Game extends JPanel implements MouseListener {
 
         Game g = new Game();
         g.addMouseListener(g);
-        g.setPreferredSize(new Dimension(600, 800));
+        g.setPreferredSize(new Dimension(600, 750));
 
         frame.add(g);
         frame.pack();
@@ -181,8 +181,13 @@ public class Game extends JPanel implements MouseListener {
             mb.draw(g2d);
 
             if (victory == 0) {
-                renderString(g2d, "Player " + currentPlayer + "'s Turn",
-                        60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
+                if (gameType == 1) {
+                    renderString(g2d, "Playing Against AI",
+                            60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
+                } else {
+                    renderString(g2d, "Player " + currentPlayer + "'s Turn",
+                            60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
+                }
             } else {
                 renderString(g2d, "Player " + victory + " Wins!",
                         60, 6, getWidth() / 2, getWidth() + 3 * (getHeight() - getWidth()) / 4);
