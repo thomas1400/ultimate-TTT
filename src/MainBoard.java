@@ -241,7 +241,7 @@ class MainBoard {
      */
     public void makeMove(int cb, int cell, int player) {
         cells[cb].makeMove(cell, player);
-        lastClicked = cell;
+        lastClicked = cb;
         cells[cb].setLastClicked(cell);
         cells[cb].checkVictory(player);
         activeBoard = cell;

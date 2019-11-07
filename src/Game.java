@@ -126,7 +126,6 @@ public class Game extends JPanel implements MouseListener {
     private void update() {
         if (mouseClicked) {
             if (!gameStarted) {
-                System.out.println("clicked");
                 if (onePButton.contains(clickPt)) {
                     gameStarted = true;
                     gameType = 1;
@@ -153,6 +152,8 @@ public class Game extends JPanel implements MouseListener {
                     if (gameType == 2) { // if 2 player: change currentPlayer
                         currentPlayer = 3 - currentPlayer;
                     }
+
+                    System.out.println(victory);
 
                 }
                 mouseClicked = false;
