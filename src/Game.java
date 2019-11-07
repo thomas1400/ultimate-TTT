@@ -141,7 +141,7 @@ public class Game extends JPanel implements MouseListener {
                         victory = currentPlayer;
                         mb.endGame();
                     }
-                    if (gameType == 1) { // if 1 player: make computer move, check victory
+                    if (gameType == 1 && victory == 0) { // if 1 player: make computer move, check victory
                         Move AIMove = ga.alphabetaMove(mb, 4, 2);
                         mb.makeMove(AIMove.getCellBoard(), AIMove.getCell(), 2);
                         if (mb.checkVictory(2)) {
@@ -152,9 +152,6 @@ public class Game extends JPanel implements MouseListener {
                     if (gameType == 2) { // if 2 player: change currentPlayer
                         currentPlayer = 3 - currentPlayer;
                     }
-
-                    System.out.println(victory);
-
                 }
                 mouseClicked = false;
             }
